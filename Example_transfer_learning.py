@@ -92,12 +92,14 @@ class Vgg16:
         # detach original VGG fc layers and
         # reconstruct your own fc layers serve for your own purpose
         self.flatten = tf.reshape(pool5, [-1, 7*7*512])
-        self.fc6 = tf.layers.dense(self.flatten, 256, tf.nn.tanh, name='fc6')
-        self.fc6 = tf.layers.dropout(self.fc6, rate=0.5, training=self.tf_is_training)
+        self.fc6 = tf.layers.dense(self.flatten, 256, tf.nn.relu, name='fc6')
+        self.fc6 = tf.layers.dropout(self.fc6, rate=0.8, training=self.tf_is_training)
+        self.fc6 = tf.layers.batch_normalization(self.fc6, training=self.tf_is_training)
         self.fc7 = tf.layers.dense(self.fc6, 64, tf.nn.tanh, name='fc7')
-        self.fc7 = tf.layers.dropout(self.fc7, rate=0.5, training=self.tf_is_training)
+        self.fc7 = tf.layers.dropout(self.fc7, rate=0.8, training=self.tf_is_training)
+        self.fc7 = tf.layers.batch_normalization(self.fc7, training=self.tf_is_training)
         self.fc8 = tf.layers.dense(self.fc7, 32, tf.nn.tanh, name='fc8')
-        self.fc8 = tf.layers.dropout(self.fc8, rate=0.5, training=self.tf_is_training)
+        self.fc8 = tf.layers.dropout(self.fc8, rate=0.8, training=self.tf_is_training)
         self.out = tf.layers.dense(self.fc8, 3, tf.nn.softmax, name='out')
 
         self.sess = tf.Session()
@@ -107,7 +109,7 @@ class Vgg16:
         else:   # training graph
             self.loss = tf.reduce_mean(-tf.reduce_sum(self.tfy * tf.log(self.out), reduction_indices=[1]))
             # self.loss = tf.losses.mean_squared_error(labels=self.tfy, predictions=self.out)
-            self.train_op = tf.train.AdamOptimizer(0.0000001).minimize(self.loss)
+            self.train_op = tf.train.AdamOptimizer(0.00000001).minimize(self.loss)
             self.sess.run(tf.global_variables_initializer())
 
     def max_pool(self, bottom, name):
@@ -154,8 +156,8 @@ def train():
 
     vgg = Vgg16(vgg16_npy_path='D:\Research_Stuffs/Final Design/IMAGESET/DeepLearning/vgg16.npy')
     print('Net built')
-    for i in range(2000):
-        b_idx = np.random.randint(0, len(xs), 30)
+    for i in range(1000):
+        b_idx = np.random.randint(0, len(xs), 20)
         train_loss = vgg.train(xs[b_idx], ys[b_idx])
         print(i, 'train loss: ', train_loss)
 

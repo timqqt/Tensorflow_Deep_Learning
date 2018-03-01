@@ -1,3 +1,5 @@
+# Use the model trained in the "Example_Activation_Function"
+
 import tensorflow as tf
 import numpy as np
 # 在下面的代码中，默认加载了TensorFlow计算图上定义的全部变量
