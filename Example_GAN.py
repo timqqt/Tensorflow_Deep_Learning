@@ -37,7 +37,7 @@ with tf.variable_scope('Discriminator'):
     prob_artist0 = tf.layers.dense(D_l0, 1, tf.nn.sigmoid, name='out')              # probability that the art work is made by artist
     # reuse layers for generator
     D_l1 = tf.layers.dense(G_out, 128, tf.nn.relu, name='l', reuse=True)            # receive art work from a newbie like G
-    prob_artist1 = tf.layers.dense(D_l1, 1, tf.nn.sigmoid, name='out', reuse=True)  # probability that the art work is made by artist
+    prob_artist1 = tf.layers.dense(D_l1, 1, tf.nn.sigmoid, name='out', reuse=True)  # probability that the art work is made by generator
 
 D_loss = -tf.reduce_mean(tf.log(prob_artist0) + tf.log(1-prob_artist1))
 G_loss = tf.reduce_mean(tf.log(1-prob_artist1))
